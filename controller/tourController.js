@@ -77,6 +77,8 @@ class APIFeatures {
         return this
     }
 
+    //phân trang
+
     paginate() {
         const page = this.queryString.page * 1 || 1;
         const limit = this.queryString.limit * 1 || 100;
@@ -288,7 +290,154 @@ const deleteTour=async(req,res)=>{
     
 }
 
+const getTourStats = async(req,res)=>{
+    try {
+        const stats = await Tour.aggregate(
+            [
+                {
+                    $match :{ratingsAverage :{$gte:4.5}},
+                },
+                {
+                    $group:{
+                        // _id:null,
+                        // _id:'$ratingsAverage',
+                        _id:{$toUpper:'$difficulty'},// viết hoa id
+                        numTours:{$sum:1},
+                        numRatings:{$sum:'$ratingsQuantity'},
+                        avgRating:{$avg: '$ratingsAverage'},
+                        avgPrice:{$avg:'$price'},
+                        minPrice:{$min:'$price'},
+                        maxPrice:{$max:'$price'},
 
+                    }
+                },
+                {
+                    $sort:{
+                        avgPrice :1 // tăng dần
+                    }
+                },
+                {
+                    $match :{_id :{$ne:'EASY'}}, //ne : not equel : không bằng
+                }
+
+                
+
+
+
+                // {
+                //     $group:{
+                //         _id:'$difficulty',
+                //         sumDty : {$sum:1}
+                //     }
+                // }
+
+                // tính tổng số document
+                // {
+                //     $group: {
+                //       _id: null,
+                //       totalDocuments: { $sum: 1 }
+                //     }
+                // }
+            ]
+        )
+        res.status(200).json({
+            status:'success',
+            results:stats.length,
+            data:{
+                stats,
+            }
+        })
+    }
+    catch(err) {
+        res.status(404).json({
+            status:'fail',
+            message:err
+        })
+    }
+
+
+
+
+}
+
+const getMonthlyPlan = async(req,res)=>{
+    //
+    try {
+        const year = req.params.year*1; // 2021
+        const plan = await Tour.aggregate(
+            [
+                // tách các trường có array thành các object riêng biệt
+                {
+                    $unwind:'$startDates'
+                },
+                {
+                    $match:{
+                        startDates: {
+                            $gte: new Date(`${year}-01-01`),
+                            $lte : new Date(`${year}-12-31`)
+                        }
+                    }
+                },
+                {
+                    $group:{
+                        _id:{
+                            $month:'$startDates'
+                        },
+                        numTourStarts:{$sum:1},
+                        // thêm giá trị của  trường name vào mảng tours
+                        tours:{
+                            $push:'$name'
+                        }
+                    }
+                },
+
+                // thêm 1 trường vào
+                {
+                    $addFields :{
+                        month:'$_id'
+                    }
+                },
+                
+
+                // ẩn trường k xuất hiện bằng $project
+                {
+                    $project:{
+                        _id:0
+                    }
+                },
+
+                // sắp xếp trường
+                {
+                    $sort:{
+                        numTourStarts:-1
+                    }
+                },
+
+                // giới hạn số lượng document xuất hiện
+                {
+                    $limit:6
+                }
+                
+            ]
+
+            
+        );
+
+        res.status(200).json({
+            stats:'success',
+            results:plan.length,
+            data:{
+                plan,
+            }
+        })
+        
+    } catch (err) {
+        res.status(404).json({
+            status:'fail',
+            message:err
+        })
+    }
+}
 
 // Phần luyện tập với json
 // const checkID = (req,res,next,value) =>{
@@ -391,6 +540,8 @@ module.exports = {
     getTour,
     updateTour,
     deleteTour,
-    aliasTopTours 
+    aliasTopTours ,
+    getTourStats,
+    getMonthlyPlan
 
 }

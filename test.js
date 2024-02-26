@@ -1,47 +1,47 @@
-const mongoose = require('mongoose')
-require('dotenv').config()
-const Tour = require('./models/tourModel')
+// const mongoose = require('mongoose')
+// require('dotenv').config()
+// const Tour = require('./models/tourModel')
 
-const DB =process.env.DATABASE.replace('<PASSWORD>',process.env.DATABASE_PASSWORD)
+// const DB =process.env.DATABASE.replace('<PASSWORD>',process.env.DATABASE_PASSWORD)
 
-// kết nối database
-mongoose
-    .connect(DB)
-    .then((con)=>{
-        console.log('kết nối thành công')
-        // console.log(con.connections)
-    })
+// // kết nối database
+// mongoose
+//     .connect(DB)
+//     .then((con)=>{
+//         console.log('kết nối thành công')
+//         // console.log(con.connections)
+//     })
 
-class Api {
-    constructor(query,queryString) {
-        this.query=query
-        this.queryString=queryString
-    }
+// class Api {
+//     constructor(query,queryString) {
+//         this.query=query
+//         this.queryString=queryString
+//     }
 
-    filter() {
-        this.query.find()
-        return this
-    }
+//     filter() {
+//         this.query.find()
+//         return this
+//     }
 
-    sort() {
-        this.query.select(this.queryString);
-        return this
-    }
-}
+//     sort() {
+//         this.query.select(this.queryString);
+//         return this
+//     }
+// }
 
-const run =async()=>{
-    const createApi = new Api(Tour.find(),'name duration');
+// const run =async()=>{
+//     const createApi = new Api(Tour.find(),'name duration');
 
-    createApi.filter()
-    createApi.sort()
+//     createApi.filter()
+//     createApi.sort()
 
-    const tour = await createApi.query;
+//     const tour = await createApi.query;
 
-    console.log(tour)
+//     console.log(tour)
 
-}
+// }
 
-run()
+// run()
 
 
 
@@ -77,3 +77,17 @@ run()
 //         message: err
 //     })
 // }
+
+
+/*
+    "2024-02-19": Ngày 19 tháng 2 năm 2024.
+    "T": Dấu "T" được sử dụng để phân tách phần ngày và phần giờ trong chuỗi.
+    "11:04:32.344": Thời gian 11 giờ, 4 phút, 32 giây và 344 miligiây.
+    "Z": Ký tự "Z" đại diện cho múi giờ UTC (Coordinated Universal Time). Nếu có "Z" ở cuối, nó cho biết thời gian đã được chuyển đổi về UTC.
+
+*/
+const b = new  Date("2024-02-19T11:04:32.344Z")
+const a  = new Date('2024-03-01');
+console.log(a);
+console.log(b)
+console.log(a>b)

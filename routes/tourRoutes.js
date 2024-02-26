@@ -5,7 +5,17 @@ const express = require('express');
 const router = express.Router();
 
 // controller
-const {getAllTours,createTour,getTour,updateTour,deleteTour,checkID,checkBody,aliasTopTours } =require('../controller/tourController')
+const {getAllTours
+    ,createTour
+    ,getTour
+    ,updateTour
+    ,deleteTour,
+    checkID,
+    checkBody,
+    aliasTopTours,
+    getTourStats ,
+    getMonthlyPlan
+} =require('../controller/tourController')
 
 
 
@@ -18,6 +28,13 @@ router
     .get(aliasTopTours ,getAllTours);
 
 
+
+router 
+    .route('/tour-stats')
+    .get(getTourStats)
+router
+    .route('/monthly-plan/:year')
+    .get(getMonthlyPlan)
 router
     .route('/') // tương đương /api/v1/tours
     .get(getAllTours)
