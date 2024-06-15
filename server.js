@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-require('dotenv').config()
+require('dotenv').config({path:'./.env'});
+
 // không liên quan đến express thì ta sẽ cấu hình tại đây
 const app = require('./app');
 
@@ -56,9 +57,45 @@ mongoose
 //     })
   
 const port =process.env.PORT|| 3000;
-app.listen(port,()=>{
+const server =app.listen(port,()=>{
     console.log(`App đang được chạy trên port ${port}`);
 });
+
+// sự kiện unhandleRejection được phát ra mỗi khi có bất cứ promise nào bị reject ( từ chối) 
+
+process.on('unhandledRejection',(reason,promise)=>{
+    // console.log('ly do',reason);
+   // nếu có vấn đề gì với ưng dụng thì ta có thể tắt nó đi
+   //process.exit(0) 0 có nghĩa thành công
+   // 1 có nghĩa thất bại
+   console.log('unhandler rejection  Shutting down ')
+   server.close(()=>{ // đóng server  để ngừng lắng nghe các kết nối mới và đóng máy chủ.
+    process.exit(1);  // tắt ứng dụng
+   })
+ 
+   /*
+    server.close() chỉ dừng việc lắng nghe kết nối mới, không chặn các kết 
+    nối hiện tại từ việc hoàn thành. Để ngừng toàn bộ máy chủ và ngăn chặn
+     tất cả các kết nối, bạn có thể xem xét cách sử dụng các biểu thức như 
+     process.exit() hoặc các phương pháp quản lý đặc biệt khác tùy thuộc vào 
+     ngữ cảnh ứng dụng của bạn.
+   
+   
+   */
+})
+
+// bất cứ lỗi hay bug nào mà chưa được xử lý ngoại lệ thì sẽ nhảy vào đây để xủ lý
+
+
+
+// console.log(x)
+
+
+// TEST
+
+
+
+
 
 
 

@@ -1,18 +1,23 @@
  
 const fs = require('fs');
- const users = JSON.parse(fs.readFileSync(`./dev-data/data/users.json`));
- const getAllUsers =(req,res)=>{
-     res.status(500).json({
-         status:'error',
-         message:'this route is not yet defined'
-     })
- }
- const createUser =(req,res)=>{
-     res.status(500).json({
-         status:'error',
-         message:'this route is not yet defined'
-     })
- }
+const User =require('../models/userModel');
+
+const catchAsync = require('../utils/catchAsync');
+
+ const getAllUsers =catchAsync (async(req,res)=>{
+
+ 
+    const user = await User.find();
+
+    // SEND QUERY
+    res.status(200).json({
+        status:'success',
+        results:user.length,
+        data:{
+            user,
+        }
+    })
+ })
  
  const getUser =(req,res)=>{
      res.status(500).json({
@@ -36,7 +41,7 @@ const fs = require('fs');
 
  module.exports = {
     getAllUsers,
-    createUser,
+    // createUser,a
     getUser,
     updateUser,
     deleteUser

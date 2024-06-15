@@ -8,12 +8,17 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const morgan = require('morgan')
+
+const AppError = require('./utils/appError')
 // chạy env
 
 // eslint-disable-next-line import/extensions
-const tourRouter = require('./routes/tourRoutes.js');
+const tourRouter = require('./routes/tourRoutes');
 // eslint-disable-next-line import/extensions
-const usersRouter = require('./routes/usersRoutes.js');
+const usersRouter = require('./routes/usersRoutes');
+
+// errorController
+const {globalErrorHandler} = require('./controller/errorController')
 
 // middleware
 
@@ -40,7 +45,9 @@ if(process.env.NODE_ENV === 'development') {
     // app.use(morgan('tiny')) // không có màu sắc
 }
 
-// các middleware sẽ áp dụng cho tất cả các yêu cầu
+
+/*
+    // các middleware sẽ áp dụng cho tất cả các yêu cầu
 
     // app.use((req,res,next)=>{
     //     console.log(`Middleware1 ${req.method} ,${req.url}`);
@@ -53,48 +60,58 @@ if(process.env.NODE_ENV === 'development') {
     // });
 
 
+*/
+
+
+
 app.use(express.json());// express sẽ tự động parse(phân tích cú pháp) dữ liệu json từ body và đưa vào đối tượng req.body
 
-// app.use((req,res,next)=>{
-//     console.log('hello from the middleware');
-    
-//     // không có next thif chương trình sẽ bị kẹt ngay chỗ này
-//     next()
-// });
-// app.use((req,res,next)=>{
-//     console.log(new Date().toISOString());
 
-//     req.requestTime= new Date().toISOString()
-//     next();
-//     /*
+
+/*
+    // app.use((req,res,next)=>{
+    //     console.log('hello from the middleware');
         
-//         toISOString() là một phương thức trong JavaScript được sử dụng để chuyển đổi đối tượng thời gian (date) thành một chuỗi biểu diễn chuẩn theo định dạng ISO 8601. Phương thức này thuộc về đối tượng Date trong JavaScript.
+    //     // không có next thif chương trình sẽ bị kẹt ngay chỗ này
+    //     next()
+    // });
+    // app.use((req,res,next)=>{
+    //     console.log(new Date().toISOString());
 
-//         Ví dụ, nếu bạn có một đối tượng Date và muốn biểu diễn nó dưới dạng chuỗi theo định dạng ISO 8601, bạn có thể sử dụng phương thức toISOString() như sau:
+    //     req.requestTime= new Date().toISOString()
+    //     next();
+    //     /*
+            
+    //         toISOString() là một phương thức trong JavaScript được sử dụng để chuyển đổi đối tượng thời gian (date) thành một chuỗi biểu diễn chuẩn theo định dạng ISO 8601. Phương thức này thuộc về đối tượng Date trong JavaScript.
 
-//         javascript
-//         Copy code
-//         const currentDate = new Date();
-//         const isoString = currentDate.toISOString();
+    //         Ví dụ, nếu bạn có một đối tượng Date và muốn biểu diễn nó dưới dạng chuỗi theo định dạng ISO 8601, bạn có thể sử dụng phương thức toISOString() như sau:
 
-//         console.log(isoString);
-//         Kết quả sẽ là một chuỗi có định dạng như "YYYY-MM-DDTHH:mm:ss.sssZ", trong đó:
+    //         javascript
+    //         Copy code
+    //         const currentDate = new Date();
+    //         const isoString = currentDate.toISOString();
 
-//         YYYY là năm
-//         MM là tháng
-//         DD là ngày
-//         T là ký tự ngăn cách giữa ngày và thời gian
-//         HH là giờ
-//         mm là phút
-//         ss là giây
-//         sss là mili-giây
-//         Z là ký tự biểu thị múi giờ UTC
+    //         console.log(isoString);
+    //         Kết quả sẽ là một chuỗi có định dạng như "YYYY-MM-DDTHH:mm:ss.sssZ", trong đó:
+
+    //         YYYY là năm
+    //         MM là tháng
+    //         DD là ngày
+    //         T là ký tự ngăn cách giữa ngày và thời gian
+    //         HH là giờ
+    //         mm là phút
+    //         ss là giây
+    //         sss là mili-giây
+    //         Z là ký tự biểu thị múi giờ UTC
+        
+    //     
+    //     //toISOString() là một phương thức trong JavaScript được sử dụng để chuyển đổi
+    //     // đối tượng thời gian (date) thành một chuỗi biểu diễn chuẩn theo định dạng ISO 8601
+
+    // });
+
+*/
     
-//     */
-//     //toISOString() là một phương thức trong JavaScript được sử dụng để chuyển đổi
-//     // đối tượng thời gian (date) thành một chuỗi biểu diễn chuẩn theo định dạng ISO 8601
-
-// });
 
 
 // định tuyến route (đường dẫn) http method get
@@ -109,14 +126,15 @@ app.use(express.json());// express sẽ tự động parse(phân tích cú pháp
      Nó cho phép bạn đặt mã trạng thái trước khi sử dụng các phương thức 
      send, json, hoặc các phương thức phản hồi khác.
 */
+
+
+
+/*
 // app.get('/',(req,res)=>{
 //      res.status(200).send('Xin chào lời chào đến từ server side')
 // });
 
-
-
-
-// app.get('/obj',(req,res)=>{
+    // app.get('/obj',(req,res)=>{
 //     console.log('đang chạy')
 //     res.status(200).json(
 //         {
@@ -130,6 +148,10 @@ app.use(express.json());// express sẽ tự động parse(phân tích cú pháp
 // app.post('/',(req,res)=>{
 //     res.send('bạn có thể post')
 // })
+
+
+*/
+
 
 
 // đặt public là thư mục gốc như chúng ta đã xác định
@@ -146,11 +168,45 @@ app.use('/api/v1/users',usersRouter);
 
 
 // eslint-disable-next-line no-lone-blocks
-app.use((req,res,next)=>{{
-    res.status(400).send('không tìm thấy')
-}})
+// app.use((req,res,next)=>{{
+//     res.status(400).send('không tìm thấy')
+// }})
+
+// all được dùng để xử lý các yêu cầu HTTP (GET, POST, PUT, DELETE)
+// * dược sử
+//req.originalUrl in ra url được yêu cầu
+
+// xử lý lỗi vận hành
+app.all('*',(req,res,next)=>{
+    // res.status(404).json({
+    //     status:'fail',
+    //     message:`Can't find ${req.originalUrl} on this server`
+    // })
+    
+    // const err = new Error(`Can't find ${req.originalUrl} on this server`)
+    // err.status='fail';
+    // err.statusCode=404;
+
+    // khi truyền đói số vào next là một lỗi thì nó sẽ ngay lập tức 
+    // bỏ qua hết các middel ware không xử lý lỗi để vào ngay phần middle xử lý lỗi để thực thi
+    // next(err);
+    console.log('thực hiện bắt lỗi ở app use có err*')
+       next(new AppError(`Can't find ${req.originalUrl} on this server`,404))
+
+    
+})
+// app.all('*',(req,res,next)=>{
+//     // res.status(404).json({
+//     //     status:'fail',
+//     //     message:`Can't find ${req.originalUrl} on this server`
+//     // })
+//     console.log('không bỏ qua')
+    
+//     next();
+// })
 
 
+app.use(globalErrorHandler)
 
 // start server
 

@@ -19,6 +19,11 @@ const {getAllTours
 
 
 
+const {
+    protect,
+    restrictTo
+ } = require('../controller/authController')
+
 // xử lý middleware khi có tham số đến
 // router.param('id',checkID)
 
@@ -37,14 +42,14 @@ router
     .get(getMonthlyPlan)
 router
     .route('/') // tương đương /api/v1/tours
-    .get(getAllTours)
+    .get( protect,getAllTours)
     .post(createTour);
     // .post(checkBody,createTour);
 router
     .route('/:id') // tương đương /api/v1/tours/:id
     .get(getTour)
     .patch(updateTour)
-    .delete(deleteTour)
+    .delete(protect,restrictTo('admin','lead-guide'),deleteTour)
 
 
 module.exports=router;

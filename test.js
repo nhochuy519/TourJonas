@@ -86,8 +86,20 @@
     "Z": Ký tự "Z" đại diện cho múi giờ UTC (Coordinated Universal Time). Nếu có "Z" ở cuối, nó cho biết thời gian đã được chuyển đổi về UTC.
 
 */
-const b = new  Date("2024-02-19T11:04:32.344Z")
-const a  = new Date('2024-03-01');
-console.log(a);
-console.log(b)
-console.log(a>b)
+// const b = new  Date("2024-02-19T11:04:32.344Z")
+// const a  = new Date('2024-03-01');
+// console.log(a);
+// console.log(b)
+// console.log(a>b)
+
+const crypto = require('crypto')
+
+const resetToken = crypto.randomBytes(32).toString('hex');
+
+const hasg =crypto.createHash('sha256').update(resetToken).digest('hex');
+
+console.log(resetToken);
+console.log(hasg)
+
+const time = Date.now();
+console.log(time)
