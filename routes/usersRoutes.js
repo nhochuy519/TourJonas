@@ -14,6 +14,7 @@ const {
     getUser,
     updateUser,
     deleteUser,
+    updateMe
     
     
  // eslint-disable-next-line node/no-unpublished-require
@@ -39,7 +40,8 @@ router.patch('/resetPassword/:token',resetPassword)
 
 router.patch('/updateMyPassword',protect,updatePassword)
 
-    
+
+router.patch('/updateMe',protect,updateMe)
 router
     .route('/')
     .get( getAllUsers)
